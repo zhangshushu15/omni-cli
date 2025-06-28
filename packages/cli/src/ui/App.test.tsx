@@ -14,7 +14,8 @@ import {
   ToolRegistry,
   AccessibilitySettings,
   SandboxConfig,
-} from '@google/gemini-cli-core';
+  LLMProvider,
+} from '@zhangshushu15/omni-cli-core';
 import { LoadedSettings, SettingsFile, Settings } from '../config/settings.js';
 import process from 'node:process';
 import { Tips } from './components/Tips.js';
@@ -69,10 +70,10 @@ interface MockServerConfig {
   getAllGeminiMdFilenames: Mock<() => string[]>;
 }
 
-// Mock @google/gemini-cli-core and its Config class
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+// Mock @zhangshushu15/omni-cli-core and its Config class
+vi.mock('@zhangshushu15/omni-cli-core', async (importOriginal) => {
   const actualCore =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@zhangshushu15/omni-cli-core')>();
   const ConfigClassMock = vi
     .fn()
     .mockImplementation((optionsPassedToConstructor) => {
@@ -212,6 +213,7 @@ describe('App UI', () => {
       sessionId: 'test-session-id',
       cwd: '/tmp',
       model: 'model',
+      provider: LLMProvider.GEMINI,
     }) as unknown as MockServerConfig;
 
     // Ensure the getShowMemoryUsage mock function is specifically set up if not covered by constructor mock

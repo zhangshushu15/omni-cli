@@ -36,9 +36,10 @@ import {
   ContentGenerator,
   ContentGeneratorConfig,
   createContentGenerator,
+  createProviderBasedContentGenerator,
 } from './contentGenerator.js';
 import { ProxyAgent, setGlobalDispatcher } from 'undici';
-import { DEFAULT_GEMINI_FLASH_MODEL } from '../config/models.js';
+import { DEFAULT_GEMINI_FLASH_MODEL, LLMProvider } from '../config/models.js';
 
 function isThinkingSupported(model: string) {
   if (model.startsWith('gemini-2.5')) return true;
@@ -65,11 +66,45 @@ export class GeminiClient {
   }
 
   async initialize(contentGeneratorConfig: ContentGeneratorConfig) {
-    this.contentGenerator = await createContentGenerator(
-      contentGeneratorConfig,
-      this.config.getSessionId(),
-    );
+    const provider = this.config.getProvider();
+
+    if (provider === LLMProvider.GEMINI) {
+      // Use existing Gemini implementation for backward compatibility
+      this.contentGenerator = await createContentGenerator(
+        contentGeneratorConfig,
+        this.config.getSessionId(),
+      );
+    } else {
+      const providerConfig = {
+        provider,
+        model: this.model,
+        apiKey: this.getApiKeyForProvider(provider),
+        baseURL: this.config.getBaseURL(),
+      };
+      this.contentGenerator =
+        await createProviderBasedContentGenerator(providerConfig);
+    }
+
     this.chat = await this.startChat();
+  }
+
+  private getApiKeyForProvider(provider: LLMProvider): string | undefined {
+    switch (provider) {
+      case LLMProvider.OPENAI:
+        return process.env.OPENAI_API_KEY;
+      case LLMProvider.ANTHROPIC:
+        return process.env.ANTHROPIC_API_KEY;
+      case LLMProvider.DEEPSEEK:
+        return process.env.DEEPSEEK_API_KEY;
+      case LLMProvider.OPENROUTER:
+        return process.env.OPENROUTER_API_KEY;
+      case LLMProvider.OLLAMA:
+        return undefined; // Ollama doesn't need an API key
+      case LLMProvider.VLLM:
+        return process.env.VLLM_API_KEY;
+      default:
+        return undefined;
+    }
   }
 
   getContentGenerator(): ContentGenerator {

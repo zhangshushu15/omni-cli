@@ -12,7 +12,7 @@ import {
   getErrorMessage,
   isNodeError,
   unescapePath,
-} from '@google/gemini-cli-core';
+} from '@zhangshushu15/omni-cli-core';
 import {
   HistoryItem,
   IndividualToolCallDisplay,

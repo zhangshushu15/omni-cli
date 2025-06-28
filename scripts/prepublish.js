@@ -23,10 +23,10 @@ if (!fs.existsSync(packageJsonPath)) {
     !packageJson.repository ||
     typeof packageJson.repository !== 'object' ||
     packageJson.repository.type !== 'git' ||
-    !packageJson.repository.url.includes('google-gemini/gemini-cli')
+    !packageJson.repository.url.includes('zhangshushu15/omni-cli')
   ) {
     errors.push(
-      `Error: The "repository" field in ${packageJsonPath} must be an object pointing to the "google-gemini/gemini-cli" git repository.`,
+      `Error: The "repository" field in ${packageJsonPath} must be an object pointing to the "zhangshushu15/omni-cli" git repository.`,
     );
   }
 }

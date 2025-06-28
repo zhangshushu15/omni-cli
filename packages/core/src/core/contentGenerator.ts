@@ -14,8 +14,9 @@ import {
   GoogleGenAI,
 } from '@google/genai';
 import { createCodeAssistContentGenerator } from '../code_assist/codeAssist.js';
-import { DEFAULT_GEMINI_MODEL } from '../config/models.js';
+import { DEFAULT_GEMINI_MODEL, ProviderConfig } from '../config/models.js';
 import { getEffectiveModel } from './modelCheck.js';
+import { NonGeminiContentGenerator } from '../providers/nonGeminiContentGenerator.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -133,4 +134,16 @@ export async function createContentGenerator(
   throw new Error(
     `Error creating contentGenerator: Unsupported authType: ${config.authType}`,
   );
+}
+
+/**
+ * Omni: Create a ContentGenerator that allows for multi-LLM provider support
+ * while maintaining backward compatibility
+ */
+export async function createProviderBasedContentGenerator(
+  providerConfig: ProviderConfig,
+): Promise<ContentGenerator> {
+  const providerManager = new NonGeminiContentGenerator(providerConfig);
+  await providerManager.initialize();
+  return providerManager;
 }

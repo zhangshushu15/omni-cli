@@ -12,6 +12,7 @@ import {
 } from './sdk.js';
 import { Config } from '../config/config.js';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import { LLMProvider } from '../config/models.js';
 
 vi.mock('@opentelemetry/sdk-node');
 vi.mock('../config/config.js');
@@ -29,6 +30,7 @@ describe('telemetry', () => {
       targetDir: '/test/dir',
       debugMode: false,
       cwd: '/test/dir',
+      provider: LLMProvider.GEMINI,
     });
     vi.spyOn(mockConfig, 'getTelemetryEnabled').mockReturnValue(true);
     vi.spyOn(mockConfig, 'getTelemetryOtlpEndpoint').mockReturnValue(

@@ -13,7 +13,7 @@ import {
   createSimulated429Error,
   resetRequestCounter,
 } from './testUtils.js';
-import { DEFAULT_GEMINI_FLASH_MODEL } from '../config/models.js';
+import { DEFAULT_GEMINI_FLASH_MODEL, LLMProvider } from '../config/models.js';
 import { retryWithBackoff } from './retry.js';
 import { AuthType } from '../core/contentGenerator.js';
 
@@ -27,6 +27,7 @@ describe('Flash Fallback Integration', () => {
       debugMode: false,
       cwd: '/test',
       model: 'gemini-2.5-pro',
+      provider: LLMProvider.GEMINI,
     });
 
     // Reset simulation state for each test

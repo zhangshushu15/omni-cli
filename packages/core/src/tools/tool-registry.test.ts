@@ -30,6 +30,7 @@ import {
   Schema,
 } from '@google/genai';
 import { spawn } from 'node:child_process';
+import { LLMProvider } from '../config/models.js';
 
 // Use vi.hoisted to define the mock function so it can be used in the vi.mock factory
 const mockDiscoverMcpTools = vi.hoisted(() => vi.fn());
@@ -132,6 +133,7 @@ const baseConfigParams: ConfigParameters = {
   geminiMdFileCount: 0,
   approvalMode: ApprovalMode.DEFAULT,
   sessionId: 'test-session-id',
+  provider: LLMProvider.GEMINI,
 };
 
 describe('ToolRegistry', () => {

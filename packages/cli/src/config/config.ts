@@ -18,7 +18,9 @@ import {
   DEFAULT_GEMINI_EMBEDDING_MODEL,
   FileDiscoveryService,
   TelemetryTarget,
-} from '@google/gemini-cli-core';
+  LLMProvider,
+  PROVIDER_INFO,
+} from '@zhangshushu15/omni-cli-core';
 import { Settings } from './settings.js';
 
 import { Extension } from './extension.js';
@@ -41,6 +43,9 @@ const logger = {
 
 interface CliArgs {
   model: string | undefined;
+  provider: string | undefined;
+  'base-url': string | undefined;
+  'list-providers': boolean | undefined;
   sandbox: boolean | string | undefined;
   'sandbox-image': string | undefined;
   debug: boolean | undefined;
@@ -61,7 +66,23 @@ async function parseArguments(): Promise<CliArgs> {
       alias: 'm',
       type: 'string',
       description: `Model`,
-      default: process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL,
+    })
+    .option('provider', {
+      type: 'string',
+      description:
+        'LLM provider to use (gemini, openai, anthropic, ollama, etc.)',
+      choices: Object.values(LLMProvider),
+      default: LLMProvider.GEMINI,
+    })
+    .option('base-url', {
+      type: 'string',
+      description:
+        'Base URL for the provider API (e.g., http://localhost:8000/v1 for ollama)',
+    })
+    .option('list-providers', {
+      type: 'boolean',
+      description: 'List available LLM providers and exit',
+      default: false,
     })
     .option('prompt', {
       alias: 'p',
@@ -161,6 +182,30 @@ export async function loadHierarchicalGeminiMemory(
   );
 }
 
+/**
+ * Displays a formatted table of all available LLM providers with their default models and base URLs.
+ * Exits the process after displaying the information.
+ */
+function displayProviderConfigurations(): void {
+  console.log('--------------------------------');
+  console.log('Provider Configurations:');
+  console.log('--------------------------------');
+  console.log('Provider     | Default Model              | Base URL');
+  console.log('-------------|----------------------------|------------------');
+
+  Object.values(LLMProvider).forEach((provider) => {
+    const providerInfo = PROVIDER_INFO[provider as LLMProvider];
+    const providerName = provider.padEnd(12);
+    const modelName = providerInfo.model.padEnd(26);
+    const baseUrlText = providerInfo.baseURL
+      ? `${providerInfo.baseURL}`
+      : 'N/A';
+
+    console.log(`${providerName} | ${modelName} | ${baseUrlText}`);
+  });
+  console.log('--------------------------------');
+}
+
 export async function loadCliConfig(
   settings: Settings,
   extensions: Extension[],
@@ -197,6 +242,17 @@ export async function loadCliConfig(
   const excludeTools = mergeExcludeTools(settings, extensions);
 
   const sandboxConfig = await loadSandboxConfig(settings, argv);
+
+  // Omni: Handle list commands before creating Config. Not ideal to do it in a class called
+  // Config, but it's the most convenient place as argv is parsed here.
+  if (argv['list-providers']) {
+    displayProviderConfigurations();
+    process.exit(0);
+  }
+
+  const provider = argv.provider as LLMProvider;
+  const model =
+    argv.model || PROVIDER_INFO[provider].model || DEFAULT_GEMINI_MODEL;
 
   return new Config({
     sessionId,
@@ -244,8 +300,11 @@ export async function loadCliConfig(
     cwd: process.cwd(),
     fileDiscoveryService: fileService,
     bugCommand: settings.bugCommand,
-    model: argv.model!,
+    model,
     extensionContextFilePaths,
+    // Provider configuration for multi-LLM support
+    provider,
+    base_url: argv['base-url'] || PROVIDER_INFO[provider].baseURL || undefined,
   });
 }
 

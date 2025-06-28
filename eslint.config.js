@@ -138,6 +138,7 @@ export default tseslint.config(
   },
   {
     files: ['./**/*.{tsx,ts,js}'],
+    ignores: ['packages/core/src/providers/**'],
     plugins: {
       'license-header': licenseHeader,
     },
@@ -148,6 +149,24 @@ export default tseslint.config(
           '/**',
           ' * @license',
           ' * Copyright 2025 Google LLC',
+          ' * SPDX-License-Identifier: Apache-2.0',
+          ' */',
+        ],
+      ],
+    },
+  },
+  {
+    files: ['packages/core/src/providers/**/*.{tsx,ts,js}'],
+    plugins: {
+      'license-header': licenseHeader,
+    },
+    rules: {
+      'license-header/header': [
+        'error',
+        [
+          '/**',
+          ' * @license',
+          ' * Copyright 2025 The Omni Code Project',
           ' * SPDX-License-Identifier: Apache-2.0',
           ' */',
         ],

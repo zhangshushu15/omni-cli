@@ -41,6 +41,7 @@ import {
 import {
   DEFAULT_GEMINI_EMBEDDING_MODEL,
   DEFAULT_GEMINI_FLASH_MODEL,
+  LLMProvider,
 } from './models.js';
 import { ClearcutLogger } from '../telemetry/clearcut-logger/clearcut-logger.js';
 
@@ -130,6 +131,8 @@ export interface ConfigParameters {
   bugCommand?: BugCommandSettings;
   model: string;
   extensionContextFilePaths?: string[];
+  provider: LLMProvider;
+  base_url?: string;
 }
 
 export class Config {
@@ -170,6 +173,8 @@ export class Config {
   private readonly extensionContextFilePaths: string[];
   private modelSwitchedDuringSession: boolean = false;
   flashFallbackHandler?: FlashFallbackHandler;
+  private readonly provider: LLMProvider;
+  private readonly base_url: string | undefined;
 
   constructor(params: ConfigParameters) {
     this.sessionId = params.sessionId;
@@ -211,6 +216,8 @@ export class Config {
     this.bugCommand = params.bugCommand;
     this.model = params.model;
     this.extensionContextFilePaths = params.extensionContextFilePaths ?? [];
+    this.provider = params.provider;
+    this.base_url = params.base_url;
 
     if (params.contextFileName) {
       setGeminiMdFilename(params.contextFileName);
@@ -443,6 +450,14 @@ export class Config {
 
   getExtensionContextFilePaths(): string[] {
     return this.extensionContextFilePaths;
+  }
+
+  getProvider(): LLMProvider {
+    return this.provider;
+  }
+
+  getBaseURL(): string | undefined {
+    return this.base_url;
   }
 
   async getGitService(): Promise<GitService> {

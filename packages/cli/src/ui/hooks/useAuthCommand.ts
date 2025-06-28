@@ -9,9 +9,10 @@ import { LoadedSettings, SettingScope } from '../../config/settings.js';
 import {
   AuthType,
   Config,
+  LLMProvider,
   clearCachedCredentialFile,
   getErrorMessage,
-} from '@google/gemini-cli-core';
+} from '@zhangshushu15/omni-cli-core';
 
 export const useAuthCommand = (
   settings: LoadedSettings,
@@ -19,7 +20,9 @@ export const useAuthCommand = (
   config: Config,
 ) => {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(
-    settings.merged.selectedAuthType === undefined,
+    // Omni: Only show auth dialog for Gemini provider
+    config.getProvider() === LLMProvider.GEMINI &&
+      settings.merged.selectedAuthType === undefined,
   );
 
   const openAuthDialog = useCallback(() => {
@@ -30,7 +33,11 @@ export const useAuthCommand = (
 
   useEffect(() => {
     const authFlow = async () => {
-      const authType = settings.merged.selectedAuthType;
+      // Omni: For non-Gemini providers, auth type does not matter, so we just use LOGIN_WITH_GOOGLE here.
+      const authType =
+        config.getProvider() !== LLMProvider.GEMINI
+          ? AuthType.LOGIN_WITH_GOOGLE
+          : settings.merged.selectedAuthType;
       if (isAuthDialogOpen || !authType) {
         return;
       }

@@ -6,7 +6,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Config } from './config.js';
-import { DEFAULT_GEMINI_MODEL, DEFAULT_GEMINI_FLASH_MODEL } from './models.js';
+import {
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_GEMINI_FLASH_MODEL,
+  LLMProvider,
+} from './models.js';
 
 describe('Flash Model Fallback Configuration', () => {
   let config: Config;
@@ -18,6 +22,8 @@ describe('Flash Model Fallback Configuration', () => {
       debugMode: false,
       cwd: '/test',
       model: DEFAULT_GEMINI_MODEL,
+      provider: LLMProvider.GEMINI,
+      base_url: undefined,
     });
 
     // Initialize contentGeneratorConfig for testing
@@ -57,6 +63,8 @@ describe('Flash Model Fallback Configuration', () => {
         debugMode: false,
         cwd: '/test',
         model: DEFAULT_GEMINI_MODEL,
+        provider: LLMProvider.GEMINI,
+        base_url: undefined,
       });
 
       // Should not crash when contentGeneratorConfig is undefined
@@ -80,6 +88,8 @@ describe('Flash Model Fallback Configuration', () => {
         debugMode: false,
         cwd: '/test',
         model: 'custom-model',
+        provider: LLMProvider.GEMINI,
+        base_url: undefined,
       });
 
       expect(newConfig.getModel()).toBe('custom-model');
@@ -129,6 +139,8 @@ describe('Flash Model Fallback Configuration', () => {
         debugMode: false,
         cwd: '/test',
         model: DEFAULT_GEMINI_MODEL,
+        provider: LLMProvider.GEMINI,
+        base_url: undefined,
       });
 
       // Should not crash when contentGeneratorConfig is undefined

@@ -1,10 +1,10 @@
 {
-  "name": "@google/gemini-cli-core",
+  "name": "@zhangshushu15/omni-cli-core",
   "version": "0.1.9",
-  "description": "Gemini CLI Core",
+  "description": "Omni CLI Server",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/google-gemini/gemini-cli.git"
+    "url": "git+https://github.com/zhangshushu15/omni-cli.git"
   },
   "type": "module",
   "main": "dist/index.js",

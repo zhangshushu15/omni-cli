@@ -11,7 +11,7 @@ import {
   ToolRegistry,
   shutdownTelemetry,
   isTelemetrySdkInitialized,
-} from '@google/gemini-cli-core';
+} from '@zhangshushu15/omni-cli-core';
 import {
   Content,
   Part,
@@ -20,6 +20,13 @@ import {
 } from '@google/genai';
 
 import { parseAndFormatApiError } from './ui/utils/errorParsing.js';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function logDebug(config: Config, ...args: any[]): void {
+  if (config.getDebugMode()) {
+    console.debug('[DEBUG] [NonInteractiveCli]', ...args);
+  }
+}
 
 function getResponseText(response: GenerateContentResponse): string | null {
   if (response.candidates && response.candidates.length > 0) {
@@ -86,11 +93,23 @@ export async function runNonInteractive(
           process.stdout.write(textPart);
         }
         if (resp.functionCalls) {
+          logDebug(
+            config,
+            'Found function calls in response:',
+            JSON.stringify(resp.functionCalls, null, 2),
+          );
           functionCalls.push(...resp.functionCalls);
         }
       }
 
+      logDebug(
+        config,
+        'Completed turn. Function calls found:',
+        functionCalls.length,
+      );
+
       if (functionCalls.length > 0) {
+        logDebug(config, 'Processing', functionCalls.length, 'function calls');
         const toolResponseParts: Part[] = [];
 
         for (const fc of functionCalls) {
@@ -102,11 +121,32 @@ export async function runNonInteractive(
             isClientInitiated: false,
           };
 
+          logDebug(
+            config,
+            'Executing tool call:',
+            JSON.stringify(requestInfo, null, 2),
+          );
+
           const toolResponse = await executeToolCall(
             config,
             requestInfo,
             toolRegistry,
             abortController.signal,
+          );
+
+          logDebug(
+            config,
+            'Tool call completed:',
+            JSON.stringify(
+              {
+                callId: toolResponse.callId,
+                error: toolResponse.error?.message,
+                resultDisplay: toolResponse.resultDisplay,
+                hasResponseParts: !!toolResponse.responseParts,
+              },
+              null,
+              2,
+            ),
           );
 
           if (toolResponse.error) {
@@ -134,9 +174,16 @@ export async function runNonInteractive(
             }
           }
         }
+
+        logDebug(
+          config,
+          'Sending tool results back to LLM:',
+          JSON.stringify(toolResponseParts, null, 2),
+        );
         currentMessages = [{ role: 'user', parts: toolResponseParts }];
       } else {
         process.stdout.write('\n'); // Ensure a final newline
+        logDebug(config, 'No function calls found, ending conversation');
         return;
       }
     }

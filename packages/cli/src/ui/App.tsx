@@ -54,7 +54,7 @@ import {
   ApprovalMode,
   isEditorAvailable,
   EditorType,
-} from '@google/gemini-cli-core';
+} from '@zhangshushu15/omni-cli-core';
 import { validateAuthMethod } from '../config/auth.js';
 import { useLogger } from './hooks/useLogger.js';
 import { StreamingContext } from './contexts/StreamingContext.js';
@@ -71,6 +71,7 @@ import { checkForUpdates } from './utils/updateCheck.js';
 import ansiEscapes from 'ansi-escapes';
 import { OverflowProvider } from './contexts/OverflowContext.js';
 import { ShowMoreLines } from './components/ShowMoreLines.js';
+import { omniAsciiLogo } from './components/AsciiArt.js';
 import { PrivacyNotice } from './privacy/PrivacyNotice.js';
 
 const CTRL_EXIT_PROMPT_DURATION_MS = 1000;
@@ -586,7 +587,10 @@ const App = ({ config, settings, startupWarnings = [] }: AppProps) => {
           key={staticKey}
           items={[
             <Box flexDirection="column" key="header">
-              <Header terminalWidth={terminalWidth} />
+              <Header
+                customAsciiArt={omniAsciiLogo}
+                terminalWidth={terminalWidth}
+              />
               {!settings.merged.hideTips && <Tips config={config} />}
             </Box>,
             ...history.map((h) => (
