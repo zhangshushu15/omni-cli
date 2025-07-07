@@ -30,7 +30,7 @@ if (root.version !== cli.version || root.version !== core.version) {
 }
 
 // 2. Check that the cli's dependency on core matches the core version.
-const coreDepVersion = cli.dependencies['@google/gemini-cli-core'];
+const coreDepVersion = cli.dependencies['@zhangshushu15/omni-cli-core'];
 const expectedCoreVersion = `^${core.version}`;
 if (
   coreDepVersion !== expectedCoreVersion &&
