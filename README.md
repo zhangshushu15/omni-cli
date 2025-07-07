@@ -36,3 +36,5 @@ Or add them to your $HOME/.env file.
 Please refer to Gemini CLI's documention for its usage. All of Gemini CLI's functions should stay the same.
 
 **Please note** that this is still experimental. The quality may vary significantly between top-tier models and lower-tier ones.
+
+Please file bugs or feature requests. Thanks!
