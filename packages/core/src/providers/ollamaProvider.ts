@@ -17,10 +17,14 @@ export class OllamaProvider extends OpenAIProvider {
   // Note: inherits provider from OpenAIProvider but overrides behavior
 
   constructor(config: ProviderConfig) {
+    let baseURL = config.baseURL || 'http://localhost:11434';
+    if (!baseURL.endsWith('/v1')) {
+      baseURL = baseURL.replace(/\/$/, '') + '/v1';
+    }
     super({
       ...config,
       provider: LLMProvider.OLLAMA,
-      baseURL: config.baseURL || 'http://localhost:11434/v1',
+      baseURL,
       apiKey: '', // Ollama doesn't require API keys
     });
   }

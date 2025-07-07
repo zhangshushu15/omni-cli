@@ -77,7 +77,7 @@ export class GeminiClient {
     } else {
       const providerConfig = {
         provider,
-        model: this.model,
+        model: this.config.getModel(),
         apiKey: this.getApiKeyForProvider(provider),
         baseURL: this.config.getBaseURL(),
       };
