@@ -8,6 +8,8 @@ To install and run, use:
 
 ```bash
 npm install -g @zhangshushu15/omni-cli
+
+# An example. You need to set up your ollama model.
 omni --provider ollama --base-url http://localhost:11434 --model qwen3:32b
 ```
 
