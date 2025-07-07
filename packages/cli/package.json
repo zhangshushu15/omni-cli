@@ -25,10 +25,10 @@
     "dist"
   ],
   "config": {
-    "sandboxImageUri": "us-docker.pkg.dev/zhangshushu15/omni-cli/sandbox:0.1.0"
+    "sandboxImageUri": "us-docker.pkg.dev/zhangshushu15/omni-cli/sandbox:0.1.9"
   },
   "dependencies": {
-    "@zhangshushu15/omni-cli-core": "file:../core",
+    "@zhangshushu15/omni-cli-core": "^0.1.9",
     "@types/update-notifier": "^6.0.8",
     "command-exists": "^1.2.9",
     "diff": "^7.0.0",

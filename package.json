@@ -14,7 +14,7 @@
     "url": "git+https://github.com/zhangshushu15/omni-cli.git"
   },
   "config": {
-    "sandboxImageUri": "us-docker.pkg.dev/zhangshushu15/omni-cli/sandbox:0.1.0"
+    "sandboxImageUri": "us-docker.pkg.dev/zhangshushu15/omni-cli/sandbox:0.1.9"
   },
   "scripts": {
     "generate": "node scripts/generate-git-commit-info.js",
@@ -50,6 +50,7 @@
     "publish:sandbox": "node scripts/publish-sandbox.js",
     "publish:npm": "npm publish --workspaces ${NPM_PUBLISH_TAG:+--tag=$NPM_PUBLISH_TAG} ${NPM_DRY_RUN:+--dry-run}",
     "publish:release": "npm run prepare:package && npm run build:packages && npm run build:sandbox:fast && npm run publish:sandbox && npm run publish:npm",
+    "publish:release:no-sandbox": "npm run prepare:package && npm run build:packages && npm run publish:npm",
     "prepublishOnly": "node scripts/check-versions.js && node scripts/prepublish.js",
     "release:version": "node scripts/version.js",
     "tag:release:nightly": "node scripts/tag-release.js",
